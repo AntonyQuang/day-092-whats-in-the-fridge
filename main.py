@@ -1,5 +1,6 @@
 from bs4 import BeautifulSoup
 import requests
+import csv
 
 website = "https://www.allrecipes.com/search/results/"
 # Pretending you are legit
@@ -28,10 +29,17 @@ recipe_webpage = response.text
 
 soup = BeautifulSoup(recipe_webpage, "html.parser")
 
-
-
 recipe_titles = [link["title"] for link in soup.find_all(class_="elementFont__titleLink")]
 recipe_descriptions = [description.get_text().replace("\n","").strip() for description in soup.find_all(class_="elementFont__details--paragraphWithin")]
 recipe_links = [link["href"] for link in soup.find_all(class_="elementFont__titleLink")]
 
+with open("recipes.csv", 'w', encoding="utf-8", newline="") as file:
+    writer = csv.writer(file)
+    header = ["Recipe", "Description", "Link"]
+    writer.writerow(header)
+    for i in range(len(recipe_titles)):
+        data = [recipe_titles[i], recipe_descriptions[i], recipe_links[i]]
+        writer.writerow(data)
+
+print("We have made a .csv with some recipe suggestions!")
 
